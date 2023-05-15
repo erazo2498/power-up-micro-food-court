@@ -1,13 +1,14 @@
 package com.pragma.powerup.foodcourtmicroservice.configuration.security.jwt;
 
-
-import com.pragma.powerup.foodcourtmicroservice.adapters.driven.jpa.mysql.adapter.UserDetailsServiceImpl;
+import com.pragma.powerup.foodcourtmicroservice.adapters.driven.jpa.mysql.entity.PrincipalUser;
+import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.util.AntPathMatcher;
@@ -22,25 +23,26 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     @Autowired
     JwtProvider jwtProvider;
 
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    private List<String> excludedPrefixes = Arrays.asList("/auth/**", "/swagger-ui/**", "/actuator/**", "/person/");
-    private AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final List<String> excludedPrefixes = Arrays.asList("/swagger-ui/**", "/actuator/**");
+    private final AntPathMatcher pathMatcher = new AntPathMatcher();
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
             throws ServletException, IOException {
         String token = getToken(req);
-        if (token != null && jwtProvider.validateToken(token)) {
-            String nombreUsuario = jwtProvider.getNombreUsuarioFromToken(token);
-            UserDetails userDetails = userDetailsService.loadUserByUsername(nombreUsuario);
+        Boolean isValid = jwtProvider.tokenIsValid(token);
+        if (token != null && isValid) {
+            Claims claims = jwtProvider.parseJwtToken(token);
+            String userName =  claims.getSubject();
+            List<String> roleList = claims.get("roles",List.class);
+
+            UserDetails userDetails = new PrincipalUser(userName,userName, null , roleList.stream().map(SimpleGrantedAuthority::new).toList());
 
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
                     userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
+            filterChain.doFilter(req, res);
         }
-        filterChain.doFilter(req, res);
     }
 
     @Override

@@ -12,5 +12,5 @@ public class RestaurantResponseDto {
     private String address;
     private String phone;
     private String nit;
-    private String password;
+    private String urlLogo;
 }

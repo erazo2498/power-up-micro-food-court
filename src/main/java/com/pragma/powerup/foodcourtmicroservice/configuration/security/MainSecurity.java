@@ -1,6 +1,5 @@
 package com.pragma.powerup.foodcourtmicroservice.configuration.security;
 
-import com.pragma.powerup.foodcourtmicroservice.adapters.driven.jpa.mysql.adapter.UserDetailsServiceImpl;
 import com.pragma.powerup.foodcourtmicroservice.configuration.security.jwt.JwtEntryPoint;
 import com.pragma.powerup.foodcourtmicroservice.configuration.security.jwt.JwtTokenFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,29 +10,15 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class MainSecurity {
-
-    @Autowired
-    UserDetailsServiceImpl userDetailsService;
-
-    @Autowired
-    JwtEntryPoint jwtEntryPoint;
-
     @Bean
     public JwtTokenFilter jwtTokenFilter() {
         return new JwtTokenFilter();
-    }
-
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
     }
 
     @Bean
@@ -43,18 +28,18 @@ public class MainSecurity {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http, JwtEntryPoint jwtEntryPoint) throws Exception {
         http.cors().and().csrf().disable()
                 .authorizeRequests(requests -> requests
-                        .requestMatchers("/auth/login", "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health", "/person/").permitAll()
-                        .requestMatchers("/user").hasRole("ADMIN")
-                        .anyRequest().authenticated()
+                        .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/actuator/health").permitAll()
+                        .requestMatchers("/restaurant/**").hasRole("ADMIN")
+                        .and().addFilterBefore(jwtTokenFilter(),UsernamePasswordAuthenticationFilter.class)
                 )
                 .formLogin().disable()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .exceptionHandling().authenticationEntryPoint(jwtEntryPoint);
-        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+//        http.addFilterBefore(jwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 }

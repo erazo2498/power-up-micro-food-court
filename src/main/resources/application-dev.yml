@@ -10,7 +10,7 @@ spring:
     hibernate:
       ddl-auto: update
 jwt:
-  secret: ${KEYSECRET_SECURITY:eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.nZU_gPcMXkWpkCUpJceSxS7lSickF0tTImHhAR949Z-Nt69LgW8G6lid-mqd9B579tYM8C4FN2jdhR2VRMsjtA}
+  secret: ${KEYSECRET_SECURITY:eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJqb25oQG1haWwuY29tIiwibmFtZSI6IkpvaG4gRG9lIiwicm9sZSI6MSwiaWF0IjoxNTE2MjM5MDIyfQ.Ab1B2G1UENl1yzzHkU4R0PkzsK0BM1By0sb8JbpK__LApPF4ybgA8siRIHjIMj23ymIyhfWKLtF3BQkuM5xdNg}
   expiration: ${EXPIRE_DAYS_SECURITY:3600000}
 
 management:

@@ -10,7 +10,7 @@ import java.util.List;
 @Mapper(componentModel = "spring",
         unmappedTargetPolicy = ReportingPolicy.IGNORE,
         unmappedSourcePolicy = ReportingPolicy.IGNORE)
-public interface IRequestResponseMapper {
+public interface IRestaurantResponseMapper {
     RestaurantResponseDto restaurantToRestaurantResponse(Restaurant restaurant);
     List<RestaurantResponseDto> restaurantListToRestaurantResponseDtoList(List<Restaurant> restaurantList);
 }

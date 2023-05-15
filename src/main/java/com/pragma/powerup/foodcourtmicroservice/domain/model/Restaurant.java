@@ -7,16 +7,16 @@ public class Restaurant {
     private String address;
     private String phone;
     private String nit;
-    private String password;
+    private String urlLogo;
 
-    public Restaurant(Long id, Long idOwner, String name, String address, String phone, String nit, String password) {
+    public Restaurant(Long id, Long idOwner, String name, String address, String phone, String nit, String urlLogo) {
         this.id = id;
         this.idOwner = idOwner;
         this.name = name;
         this.address = address;
         this.phone = phone;
         this.nit = nit;
-        this.password = password;
+        this.urlLogo = urlLogo;
     }
 
     public Long getId() {
@@ -67,11 +67,11 @@ public class Restaurant {
         this.nit = nit;
     }
 
-    public String getPassword() {
-        return password;
+    public String getUrlLogo() {
+        return urlLogo;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setUrlLogo(String urlLogo) {
+        this.urlLogo = urlLogo;
     }
 }
