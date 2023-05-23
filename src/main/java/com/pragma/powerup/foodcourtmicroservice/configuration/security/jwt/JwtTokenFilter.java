@@ -30,8 +30,7 @@ public class JwtTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain)
             throws ServletException, IOException {
         String token = getToken(req);
-        Boolean isValid = jwtProvider.tokenIsValid(token);
-        if (token != null && isValid) {
+        if (token != null && jwtProvider.tokenIsValid(token)) {
             Claims claims = jwtProvider.parseJwtToken(token);
             String userName =  claims.getSubject();
             List<String> roleList = claims.get("roles",List.class);
@@ -41,8 +40,8 @@ public class JwtTokenFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(userDetails, null,
                     userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
-            filterChain.doFilter(req, res);
         }
+        filterChain.doFilter(req, res);
     }
 
     @Override
